@@ -84,6 +84,8 @@ async function createOrder(productName, productPrice) {
 
 window.loadProducts = loadProducts;
 
+console.log("createOrder 등록 전");
+
 async function createOrder(productName, productPrice) {
 
     const user = await getCurrentUser();
@@ -121,3 +123,5 @@ async function createOrder(productName, productPrice) {
 }
 
 window.createOrder = createOrder;
+
+console.log("createOrder 등록 완료");
