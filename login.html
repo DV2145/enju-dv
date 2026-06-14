@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로그인 - 엔주의 DV데삭</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🐉 엔주의 DV데삭</div>
+</header>
+
+<div class="container">
+    <div class="card">
+
+        <h2>로그인</h2>
+
+        <input type="email" id="email" placeholder="이메일">
+
+        <input type="password" id="password" placeholder="비밀번호">
+
+        <br><br>
+
+        <button onclick="login()">로그인</button>
+
+        <br><br>
+
+        <a href="signup.html">회원가입 하러가기</a>
+
+    </div>
+</div>
+
+<script>
+
+async function login(){
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+    });
+
+    if(error){
+        alert(error.message);
+        return;
+    }
+
+    alert("로그인 성공!");
+    location.href = "index.html";
+}
+
+</script>
+
+</body>
+</html>
