@@ -1,10 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>엔주의 DV데삭</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>엔주의 DV데삭</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
 </head>
+
 <body>
-    <h1>엔주의 DV데삭</h1>
-    <p>사이트 제작중...</p>
+
+<header>
+    <div class="logo">🐉 엔주의 DV데삭</div>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>내 정보</h2>
+
+        <p><b>닉네임:</b> <span id="nickname">불러오는중...</span></p>
+
+        <p><b>포인트:</b> <span id="points">0</span>P</p>
+
+        <button onclick="logout()">로그아웃</button>
+    </div>
+
+    <div class="card">
+        <h2>상품 목록</h2>
+
+        <button onclick="alert('다음 단계에서 연결')">
+            초월 20→45 (4500P)
+        </button>
+
+        <br><br>
+
+        <button onclick="alert('다음 단계에서 연결')">
+            초월 20→45 (-0.1) (3500P)
+        </button>
+
+        <br><br>
+
+        <button onclick="alert('다음 단계에서 연결')">
+            강림 30→45 (5500P)
+        </button>
+
+        <br><br>
+
+        <button onclick="alert('다음 단계에서 연결')">
+            강림 30→45 (-0.1) (4500P)
+        </button>
+
+        <br><br>
+
+        <button onclick="alert('다음 단계에서 연결')">
+            SSS 45 / 45레벨 (20000P)
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+async function loadProfile(){
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        location.href = "login.html";
+        return;
+    }
+
+    const { data } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    document.getElementById("nickname").innerText =
+        data.nickname;
+
+    document.getElementById("points").innerText =
+        data.points;
+}
+
+async function logout(){
+
+    await supabaseClient.auth.signOut();
+
+    location.href = "login.html";
+}
+
+loadProfile();
+
+</script>
+
 </body>
 </html>
