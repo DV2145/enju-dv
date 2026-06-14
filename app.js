@@ -44,3 +44,5 @@ async function loadProducts() {
 }
 
 window.loadProducts = loadProducts;
+
+loadProducts();
