@@ -33,16 +33,91 @@ async function loadProducts() {
 
     data.forEach(product => {
 
-        productsDiv.innerHTML += `
-            <button>
-                ${product.name}
-                (${Number(product.price).toLocaleString()}P)
-            </button>
-            <br><br>
-        `;
-    });
+       productsDiv.innerHTML += `
+    <button onclick="createOrder('${product.name}', ${product.price})">
+        ${product.name}
+        (${Number(product.price).toLocaleString()}P)
+    </button>
+    <br><br>
+
+`;
+        });
+    }
+window.loadProducts = loadProducts;
+
+async function createOrder(productName, productPrice) {
+
+    const user = await getCurrentUser();
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    if (profile.points < productPrice) {
+        alert("포인트가 부족합니다.");
+        return;
+    }
+
+    const newPoint = profile.points - productPrice;
+
+    await supabaseClient
+        .from("orders")
+        .insert({
+            user_id: user.id,
+            nickname: profile.nickname,
+            product_name: productName,
+            product_price: productPrice,
+            status: "대기중"
+        });
+
+    await supabaseClient
+        .from("profiles")
+        .update({ points: newPoint })
+        .eq("id", user.id);
+
+    alert("신청 완료!");
+
+    location.reload();
 }
 
 window.loadProducts = loadProducts;
 
-loadProducts();
+async function createOrder(productName, productPrice) {
+
+    const user = await getCurrentUser();
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    if (profile.points < productPrice) {
+        alert("포인트가 부족합니다.");
+        return;
+    }
+
+    const newPoint = profile.points - productPrice;
+
+    await supabaseClient
+        .from("orders")
+        .insert({
+            user_id: user.id,
+            nickname: profile.nickname,
+            product_name: productName,
+            product_price: productPrice,
+            status: "대기중"
+        });
+
+    await supabaseClient
+        .from("profiles")
+        .update({ points: newPoint })
+        .eq("id", user.id);
+
+    alert("신청 완료!");
+    location.reload();
+}
+
+window.createOrder = createOrder;
