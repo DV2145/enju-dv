@@ -82,7 +82,15 @@ async function signup(){
     });
 
     if(error){
-        alert(error.message);
+
+        const msg = error.message.toLowerCase();
+
+        if(msg.includes("already registered")){
+            alert("이미 가입된 이메일입니다.");
+            return;
+        }
+
+        alert("회원가입 실패");
         return;
     }
 
@@ -102,7 +110,13 @@ async function signup(){
         });
 
     if(profileError){
-        alert("프로필 생성 실패: " + profileError.message);
+
+        if(profileError.message.includes("duplicate key")){
+            alert("이미 사용중인 닉네임입니다.");
+            return;
+        }
+
+        alert("프로필 생성 실패");
         return;
     }
 
