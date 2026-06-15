@@ -1,1 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>관리자 페이지</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+        <h2>주문 관리</h2>
+
+        <div id="orders"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function loadOrders(){
+
+    const { data, error } = await supabaseClient
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending:false });
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    const div = document.getElementById("orders");
+
+    div.innerHTML = "";
+
+    data.forEach(order => {
+
+        div.innerHTML += `
+        <div style="margin-bottom:20px">
+
+            <b>${order.nickname}</b><br>
+
+            ${order.product_name}<br>
+
+            ${Number(order.product_price).toLocaleString()}P<br>
+
+            상태 : ${order.status}<br><br>
+
+            <button onclick="completeOrder(${order.id})">
+            완료
+            </button>
+
+        </div>
+        <hr>
+        `;
+    });
+
+}
+
+async function completeOrder(orderId){
+
+    await supabaseClient
+        .from("orders")
+        .update({
+            status:"완료"
+        })
+        .eq("id", orderId);
+
+    alert("완료 처리됨");
+
+    loadOrders();
+}
+
+window.completeOrder = completeOrder;
+
+loadOrders();
+
+</script>
+
+</body>
+</html>
