@@ -1,20 +1,19 @@
 body{
     margin:0;
-    font-family:'Segoe UI', sans-serif;
+    font-family:'Segoe UI',sans-serif;
+    color:white;
 
     background-image:
         linear-gradient(
-            rgba(0,0,0,0.45),
-            rgba(0,0,0,0.45)
+            rgba(0,0,0,0.55),
+            rgba(0,0,0,0.55)
         ),
         url("https://dv2145.github.io/enju-dv/dragon-bg.jpg");
 
-    background-size:110%;
+    background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
     background-attachment:fixed;
-
-    color:white;
 }
 
 header{
@@ -36,25 +35,24 @@ header{
 }
 
 .sidebar{
-    width:240px;
+    width:230px;
     background:rgba(10,10,10,0.75);
     padding:20px;
     box-sizing:border-box;
     border-right:1px solid #5a4318;
+    backdrop-filter:blur(5px);
 }
 
 .profile-box{
-    background:rgba(20,20,20,0.65);
+    background:rgba(20,20,20,0.7);
     border:1px solid #5a4318;
     border-radius:15px;
     padding:20px;
     margin-bottom:20px;
-    backdrop-filter:blur(4px);
 }
 
 .profile-box h3{
     color:#ffd76a;
-    margin-top:0;
 }
 
 .sidebar nav{
@@ -67,8 +65,8 @@ header{
 .sidebar nav a{
     text-decoration:none;
     color:#ffd76a;
-    padding:12px;
-    border-radius:10px;
+    padding:14px;
+    border-radius:12px;
     background:rgba(255,215,0,0.08);
     transition:0.2s;
 }
@@ -79,96 +77,99 @@ header{
 
 .content{
     flex:1;
-    padding:25px;
+    padding:20px;
 }
 
 .card{
-    background:rgba(15,15,15,0.65);
+    background:rgba(15,15,15,0.7);
     border:1px solid #5a4318;
     border-radius:20px;
-    padding:25px;
-    box-shadow:0 0 20px rgba(0,0,0,0.5);
-    backdrop-filter:blur(4px);
+    padding:20px;
+    backdrop-filter:blur(6px);
 }
 
 .card h2{
     color:#ffd76a;
+    margin-top:0;
+}
+
+.category-title{
+    font-size:24px;
+    font-weight:bold;
+    color:#ffd76a;
+    margin:25px 0 12px;
+    border-left:4px solid #ffd76a;
+    padding-left:10px;
+}
+
+.category-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,180px));
+    gap:12px;
+    margin-bottom:25px;
+}
+
+.product-card{
+    background:rgba(10,10,10,0.75);
+    border:1px solid #c89b3c;
+    border-radius:15px;
+    padding:10px;
+    text-align:center;
+    min-height:150px;
+    transition:0.2s;
+}
+
+.product-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 0 12px rgba(255,215,0,0.3);
+}
+
+.product-image{
+    font-size:32px;
+    margin-bottom:5px;
+}
+
+.product-name{
+    font-size:14px;
+    font-weight:bold;
+    min-height:36px;
+}
+
+.product-price{
+    color:#ffd76a;
+    font-size:14px;
+    margin:8px 0;
 }
 
 button{
+    width:100%;
+    height:42px;
+
     background:linear-gradient(
         180deg,
-        #d8b04c,
-        #9e7420
+        #c99b36,
+        #7a5818
     );
 
-    color:black;
+    color:white;
     border:none;
-    border-radius:10px;
-    padding:12px 20px;
-    font-weight:bold;
+    border-radius:8px;
     cursor:pointer;
+    font-weight:bold;
 }
 
 button:hover{
     opacity:0.9;
 }
 
-#products{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-    gap:15px;
-}
-
-.product-card{
-    background:rgba(20,20,20,0.55);
-    border:1px solid #c89b3c;
-    border-radius:15px;
-    padding:10px;
-    text-align:center;
-    backdrop-filter:blur(3px);
-    min-height:220px;
-}
-
-.product-image{
-    font-size:42px;
-    margin-bottom:8px;
-}
-
-.product-name{
-    font-weight:bold;
-    font-size:18px;
-    margin-bottom:8px;
-}
-
-.product-price{
-    color:#ffd76a;
-    font-size:16px;
-    margin-bottom:12px;
-}
-
-#products button{
-    width:100%;
-    min-height:55px;
-    color:white;
-
-    background:linear-gradient(
-        180deg,
-        #6d531f,
-        #3c2c0f
-    );
-
-    border:1px solid #c89b3c;
-}
-
 input{
     width:100%;
-    box-sizing:border-box;
     padding:12px;
     border-radius:10px;
     border:1px solid #5a4318;
     background:#111;
     color:white;
+    box-sizing:border-box;
 }
 
 a{
@@ -183,5 +184,10 @@ a{
 
     .sidebar{
         width:100%;
+    }
+
+    .category-grid{
+        grid-template-columns:
+        repeat(auto-fit,minmax(160px,1fr));
     }
 }
