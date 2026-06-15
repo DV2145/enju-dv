@@ -101,6 +101,11 @@ async function completeOrder(orderId){
         .eq("id", orderId)
         .single();
 
+    if(order.status !== "대기중"){
+        alert("대기중 주문만 취소할 수 있습니다.");
+        return;
+    }
+
     const { data: profile } = await supabaseClient
         .from("profiles")
         .select("*")
