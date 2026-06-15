@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -9,6 +10,7 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase-config.js"></script>
 
 </head>
@@ -16,18 +18,50 @@
 
 <div class="container">
 
-    <div class="card">
-        <h2>주문 관리</h2>
+```
+<div class="card">
+    <h2>주문 관리</h2>
 
-        <div id="orders"></div>
+    <div id="orders">불러오는 중...</div>
 
-    </div>
+</div>
+```
 
 </div>
 
 <script>
 
+async function checkAdmin(){
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        location.href = "login.html";
+        return false;
+    }
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    if(profile.nickname !== "엔주"){
+        alert("관리자만 접근 가능합니다.");
+        location.href = "index.html";
+        return false;
+    }
+
+    return true;
+}
+
 async function loadOrders(){
+
+    const isAdmin = await checkAdmin();
+
+    if(!isAdmin) return;
 
     const { data, error } = await supabaseClient
         .from("orders")
@@ -45,6 +79,20 @@ async function loadOrders(){
 
     data.forEach(order => {
 
+        let buttons = "";
+
+        if(order.status === "대기중"){
+            buttons = `
+                <button onclick="completeOrder(${order.id})">
+                    완료
+                </button>
+
+                <button onclick="cancelOrder(${order.id})">
+                    취소
+                </button>
+            `;
+        }
+
         div.innerHTML += `
         <div style="margin-bottom:20px">
 
@@ -56,13 +104,7 @@ async function loadOrders(){
 
             상태 : ${order.status}<br><br>
 
-            <button onclick="completeOrder(${order.id})">
-완료
-</button>
-
-<button onclick="cancelOrder(${order.id})">
-취소
-</button>
+            ${buttons}
 
         </div>
         <hr>
@@ -73,27 +115,19 @@ async function loadOrders(){
 
 async function completeOrder(orderId){
 
-    const { data, error } = await supabaseClient
+    await supabaseClient
         .from("orders")
         .update({
             status:"완료"
         })
         .eq("id", orderId);
 
-    console.log("update 결과", data);
-    console.log("update 에러", error);
-
-    if(error){
-        alert(JSON.stringify(error));
-        return;
-    }
-
     alert("완료 처리됨");
 
     loadOrders();
 }
 
-    async function cancelOrder(orderId){
+async function cancelOrder(orderId){
 
     const { data: order } = await supabaseClient
         .from("orders")
@@ -133,13 +167,14 @@ async function completeOrder(orderId){
 
     loadOrders();
 }
-    
+
 window.completeOrder = completeOrder;
 window.cancelOrder = cancelOrder;
-    
+
 loadOrders();
 
 </script>
 
 </body>
 </html>
+
