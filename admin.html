@@ -20,9 +20,28 @@
 
 ```
 <div class="card">
+
+    <h2>포인트 지급</h2>
+
+    <input type="text" id="targetNickname" placeholder="닉네임">
+
+    <input type="number" id="givePoint" placeholder="지급 포인트">
+
+    <br><br>
+
+    <button onclick="givePointToUser()">
+        포인트 지급
+    </button>
+
+</div>
+
+<div class="card">
+
     <h2>주문 관리</h2>
 
-    <div id="orders">불러오는 중...</div>
+    <div id="orders">
+        불러오는 중...
+    </div>
 
 </div>
 ```
@@ -57,23 +76,53 @@ async function checkAdmin(){
     return true;
 }
 
+async function givePointToUser(){
+
+    const nickname =
+        document.getElementById("targetNickname").value;
+
+    const point =
+        Number(document.getElementById("givePoint").value);
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("nickname", nickname)
+        .single();
+
+    if(!profile){
+        alert("존재하지 않는 닉네임입니다.");
+        return;
+    }
+
+    const newPoint =
+        profile.points + point;
+
+    await supabaseClient
+        .from("profiles")
+        .update({
+            points: newPoint
+        })
+        .eq("id", profile.id);
+
+    alert("포인트 지급 완료");
+}
+
 async function loadOrders(){
 
     const isAdmin = await checkAdmin();
 
     if(!isAdmin) return;
 
-    const { data, error } = await supabaseClient
+    const { data } = await supabaseClient
         .from("orders")
         .select("*")
-        .order("created_at", { ascending:false });
+        .order("created_at", {
+            ascending:false
+        });
 
-    if(error){
-        console.error(error);
-        return;
-    }
-
-    const div = document.getElementById("orders");
+    const div =
+        document.getElementById("orders");
 
     div.innerHTML = "";
 
@@ -82,6 +131,7 @@ async function loadOrders(){
         let buttons = "";
 
         if(order.status === "대기중"){
+
             buttons = `
                 <button onclick="completeOrder(${order.id})">
                     완료
@@ -94,20 +144,21 @@ async function loadOrders(){
         }
 
         div.innerHTML += `
-        <div style="margin-bottom:20px">
+            <div style="margin-bottom:20px">
 
-            <b>${order.nickname}</b><br>
+                <b>${order.nickname}</b><br>
 
-            ${order.product_name}<br>
+                ${order.product_name}<br>
 
-            ${Number(order.product_price).toLocaleString()}P<br>
+                ${Number(order.product_price).toLocaleString()}P<br>
 
-            상태 : ${order.status}<br><br>
+                상태 : ${order.status}<br><br>
 
-            ${buttons}
+                ${buttons}
 
-        </div>
-        <hr>
+            </div>
+
+            <hr>
         `;
     });
 
@@ -159,7 +210,7 @@ async function cancelOrder(orderId){
     await supabaseClient
         .from("orders")
         .update({
-            status: "취소"
+            status:"취소"
         })
         .eq("id", orderId);
 
@@ -170,6 +221,7 @@ async function cancelOrder(orderId){
 
 window.completeOrder = completeOrder;
 window.cancelOrder = cancelOrder;
+window.givePointToUser = givePointToUser;
 
 loadOrders();
 
@@ -177,4 +229,3 @@ loadOrders();
 
 </body>
 </html>
-
