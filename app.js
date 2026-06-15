@@ -30,28 +30,59 @@ async function loadProducts() {
 
     productsDiv.innerHTML = "";
 
+    const categories = {
+        "초월": [],
+        "강림": [],
+        "SS": [],
+        "SSS": []
+    };
+
     data.forEach(product => {
 
+        if (product.name.startsWith("초월")) {
+            categories["초월"].push(product);
+        }
+        else if (product.name.startsWith("강림")) {
+            categories["강림"].push(product);
+        }
+        else if (product.name.startsWith("SSS")) {
+            categories["SSS"].push(product);
+        }
+        else if (product.name.startsWith("SS")) {
+            categories["SS"].push(product);
+        }
+
+    });
+
+    for (const category in categories) {
+
+        if (categories[category].length === 0) continue;
+
         productsDiv.innerHTML += `
-            <div class="product-card">
+            <h3 class="category-title">🐉 ${category}</h3>
+            <div class="category-grid">
+                ${categories[category].map(product => `
+                    <div class="product-card">
 
-                <div class="product-image">🐉</div>
+                        <div class="product-image">🐉</div>
 
-                <div class="product-name">
-                    ${product.name}
-                </div>
+                        <div class="product-name">
+                            ${product.name}
+                        </div>
 
-                <div class="product-price">
-                    ${Number(product.price).toLocaleString()}P
-                </div>
+                        <div class="product-price">
+                            ${Number(product.price).toLocaleString()}P
+                        </div>
 
-                <button onclick="createOrder(${product.id})">
-                    신청하기
-                </button>
+                        <button onclick="createOrder(${product.id})">
+                            신청하기
+                        </button>
 
+                    </div>
+                `).join("")}
             </div>
         `;
-    });
+    }
 }
 
 async function createOrder(productId) {
