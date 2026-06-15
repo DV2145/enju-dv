@@ -57,17 +57,19 @@ async function login(){
 
     if(error){
 
-        if(error.message.includes("Invalid login credentials")){
+        const msg = error.message.toLowerCase();
+
+        if(msg.includes("invalid login")){
             alert("이메일 또는 비밀번호가 올바르지 않습니다.");
             return;
         }
 
-        if(error.message.includes("Email not confirmed")){
+        if(msg.includes("email not confirmed")){
             alert("이메일 인증을 완료해주세요.");
             return;
         }
 
-        alert("로그인 실패 : " + error.message);
+        alert("로그인 실패");
         return;
     }
 
