@@ -1,90 +1,113 @@
 async function getCurrentUser() {
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
+const {
+data: { user }
+} = await supabaseClient.auth.getUser();
 
-    if (!user) {
-        location.href = "login.html";
-        return null;
-    }
+```
+if (!user) {
+    location.href = "login.html";
+    return null;
+}
 
-    return user;
+return user;
+```
+
 }
 
 async function loadProducts() {
 
-    const { data, error } = await supabaseClient
-        .from("products")
-        .select("*")
-        .eq("is_active", true)
-        .order("price");
+```
+const { data, error } = await supabaseClient
+    .from("products")
+    .select("*")
+    .eq("is_active", true)
+    .order("price");
 
-    if (error) {
-        console.error(error);
-        return;
-    }
+if (error) {
+    console.error(error);
+    return;
+}
 
-    const productsDiv = document.getElementById("products");
+const productsDiv = document.getElementById("products");
 
-    if (!productsDiv) return;
+if (!productsDiv) return;
 
-    productsDiv.innerHTML = "";
+productsDiv.innerHTML = "";
 
-    data.forEach(product => {
+data.forEach(product => {
 
-        productsDiv.innerHTML += `
-            <button onclick="createOrder(${product.id})">
+    productsDiv.innerHTML += `
+        <div class="product-card">
+
+            <div class="product-image">
+                🐉
+            </div>
+
+            <div class="product-name">
                 ${product.name}
-                (${Number(product.price).toLocaleString()}P)
+            </div>
+
+            <div class="product-price">
+                ${Number(product.price).toLocaleString()}P
+            </div>
+
+            <button onclick="createOrder(${product.id})">
+                신청하기
             </button>
-            <br><br>
-        `;
-    });
+
+        </div>
+    `;
+});
+```
+
 }
 
 async function createOrder(productId) {
 
-    const user = await getCurrentUser();
+```
+const user = await getCurrentUser();
 
-    const { data: product } = await supabaseClient
-        .from("products")
-        .select("*")
-        .eq("id", productId)
-        .single();
+const { data: product } = await supabaseClient
+    .from("products")
+    .select("*")
+    .eq("id", productId)
+    .single();
 
-    const { data: profile } = await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
+const { data: profile } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
-    if (profile.points < product.price) {
-        alert("포인트가 부족합니다.");
-        return;
-    }
+if (profile.points < product.price) {
+    alert("포인트가 부족합니다.");
+    return;
+}
 
-    const newPoint = profile.points - product.price;
+const newPoint = profile.points - product.price;
 
-    await supabaseClient
-        .from("orders")
-        .insert({
-            user_id: user.id,
-            nickname: profile.nickname,
-            product_name: product.name,
-            product_price: product.price,
-            status: "대기중"
-        });
+await supabaseClient
+    .from("orders")
+    .insert({
+        user_id: user.id,
+        nickname: profile.nickname,
+        product_name: product.name,
+        product_price: product.price,
+        status: "대기중"
+    });
 
-    await supabaseClient
-        .from("profiles")
-        .update({
-            points: newPoint
-        })
-        .eq("id", user.id);
+await supabaseClient
+    .from("profiles")
+    .update({
+        points: newPoint
+    })
+    .eq("id", user.id);
 
-    alert("신청 완료!");
+alert("신청 완료!");
 
-    location.reload();
+location.reload();
+```
+
 }
 
 window.loadProducts = loadProducts;
