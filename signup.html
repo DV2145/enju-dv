@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +9,9 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase-config.js"></script>
+
 </head>
 
 <body>
@@ -20,44 +23,62 @@
 <div class="container">
     <div class="card">
 
-        <h2>회원가입</h2>
+```
+    <h2>회원가입</h2>
 
-        <input type="text" id="nickname" placeholder="닉네임">
+    <input type="text" id="nickname" placeholder="닉네임">
 
-        <input type="email" id="email" placeholder="이메일">
+    <input type="email" id="email" placeholder="이메일">
 
-        <input type="password" id="password" placeholder="비밀번호">
+    <input type="password" id="password" placeholder="비밀번호">
 
-        <input type="password" id="password2" placeholder="비밀번호 확인">
+    <input type="password" id="password2" placeholder="비밀번호 확인">
 
-        <br><br>
+    <br><br>
 
-        <button onclick="signup()">회원가입</button>
+    <button onclick="signup()">회원가입</button>
 
-        <br><br>
+    <br><br>
 
-        <a href="login.html">이미 계정이 있으신가요?</a>
+    <a href="login.html">이미 계정이 있으신가요?</a>
 
-    </div>
+</div>
+```
+
 </div>
 
 <script>
 
 async function signup(){
 
-    const nickname = document.getElementById("nickname").value;
-    const email = document.getElementById("email").value;
+    const nickname = document.getElementById("nickname").value.trim();
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const password2 = document.getElementById("password2").value;
+
+    if(!nickname){
+        alert("닉네임을 입력하세요.");
+        return;
+    }
 
     if(password !== password2){
         alert("비밀번호가 일치하지 않습니다.");
         return;
     }
 
+    const { data: nicknameCheck } = await supabaseClient
+        .from("profiles")
+        .select("nickname")
+        .eq("nickname", nickname);
+
+    if(nicknameCheck && nicknameCheck.length > 0){
+        alert("이미 사용중인 닉네임입니다.");
+        return;
+    }
+
     const { data, error } = await supabaseClient.auth.signUp({
-        email: email,
-        password: password
+        email,
+        password
     });
 
     if(error){
@@ -67,15 +88,23 @@ async function signup(){
 
     const user = data.user;
 
-    await supabaseClient
+    if(!user){
+        alert("회원가입 후 이메일 인증을 완료해주세요.");
+        return;
+    }
+
+    const { error: profileError } = await supabaseClient
         .from("profiles")
-        .insert([
-            {
-                id: user.id,
-                nickname: nickname,
-                points: 0
-            }
-        ]);
+        .insert({
+            id: user.id,
+            nickname: nickname,
+            points: 0
+        });
+
+    if(profileError){
+        alert("프로필 생성 실패: " + profileError.message);
+        return;
+    }
 
     alert("회원가입 완료!");
     location.href = "login.html";
