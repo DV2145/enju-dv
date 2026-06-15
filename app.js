@@ -113,4 +113,6 @@ location.reload();
 window.loadProducts = loadProducts;
 window.createOrder = createOrder;
 
+window.addEventListener("DOMContentLoaded", () => {
 loadProducts();
+});
