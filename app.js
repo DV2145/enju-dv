@@ -16,8 +16,7 @@ async function loadProducts() {
     const { data, error } = await supabaseClient
         .from("products")
         .select("*")
-        .eq("is_active", true)
-        .order("price");
+        .eq("is_active", true);
 
     if (error) {
         console.error(error);
@@ -30,25 +29,69 @@ async function loadProducts() {
 
     productsDiv.innerHTML = "";
 
+    const groups = {
+        "초월": [],
+        "강림": [],
+        "SS": [],
+        "SSS": []
+    };
+
     data.forEach(product => {
 
+        if (product.name.startsWith("초월")) {
+            groups["초월"].push(product);
+        }
+        else if (product.name.startsWith("강림")) {
+            groups["강림"].push(product);
+        }
+        else if (product.name.startsWith("SSS")) {
+            groups["SSS"].push(product);
+        }
+        else if (product.name.startsWith("SS")) {
+            groups["SS"].push(product);
+        }
+    });
+
+    Object.keys(groups).forEach(groupName => {
+
+        if (groups[groupName].length === 0) return;
+
         productsDiv.innerHTML += `
-            <div class="product-card">
-                <div class="product-image">🐉</div>
+            <div class="category-title">
+                ${groupName}
+            </div>
 
-                <div class="product-name">
-                    ${product.name}
-                </div>
-
-                <div class="product-price">
-                    ${Number(product.price).toLocaleString()}P
-                </div>
-
-                <button onclick="createOrder(${product.id})">
-                    신청하기
-                </button>
+            <div class="category-grid" id="group-${groupName}">
             </div>
         `;
+
+        const groupDiv =
+            document.getElementById(`group-${groupName}`);
+
+        groups[groupName].forEach(product => {
+
+            groupDiv.innerHTML += `
+                <div class="product-card">
+
+                    <div class="product-image">
+                        🐉
+                    </div>
+
+                    <div class="product-name">
+                        ${product.name}
+                    </div>
+
+                    <div class="product-price">
+                        ${Number(product.price).toLocaleString()}P
+                    </div>
+
+                    <button onclick="createOrder(${product.id})">
+                        신청하기
+                    </button>
+
+                </div>
+            `;
+        });
     });
 }
 
