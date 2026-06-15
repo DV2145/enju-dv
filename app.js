@@ -1,193 +1,148 @@
-body{
-    margin:0;
-    font-family:'Segoe UI',sans-serif;
-    color:white;
+async function getCurrentUser() {
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
 
-    background-image:
-        linear-gradient(
-            rgba(0,0,0,0.55),
-            rgba(0,0,0,0.55)
-        ),
-        url("https://dv2145.github.io/enju-dv/dragon-bg.jpg");
-
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-    background-attachment:fixed;
-}
-
-header{
-    background:rgba(10,10,10,0.95);
-    border-bottom:2px solid #c89b3c;
-    padding:20px;
-    text-align:center;
-}
-
-.logo{
-    color:#ffd700;
-    font-size:32px;
-    font-weight:bold;
-}
-
-.main-layout{
-    display:flex;
-    min-height:calc(100vh - 80px);
-}
-
-.sidebar{
-    width:230px;
-    background:rgba(10,10,10,0.75);
-    padding:20px;
-    box-sizing:border-box;
-    border-right:1px solid #5a4318;
-    backdrop-filter:blur(5px);
-}
-
-.profile-box{
-    background:rgba(20,20,20,0.7);
-    border:1px solid #5a4318;
-    border-radius:15px;
-    padding:20px;
-    margin-bottom:20px;
-}
-
-.profile-box h3{
-    color:#ffd76a;
-}
-
-.sidebar nav{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-bottom:20px;
-}
-
-.sidebar nav a{
-    text-decoration:none;
-    color:#ffd76a;
-    padding:14px;
-    border-radius:12px;
-    background:rgba(255,215,0,0.08);
-    transition:0.2s;
-}
-
-.sidebar nav a:hover{
-    background:rgba(255,215,0,0.18);
-}
-
-.content{
-    flex:1;
-    padding:20px;
-}
-
-.card{
-    background:rgba(15,15,15,0.7);
-    border:1px solid #5a4318;
-    border-radius:20px;
-    padding:20px;
-    backdrop-filter:blur(6px);
-}
-
-.card h2{
-    color:#ffd76a;
-    margin-top:0;
-}
-
-.category-title{
-    font-size:24px;
-    font-weight:bold;
-    color:#ffd76a;
-    margin:25px 0 12px;
-    border-left:4px solid #ffd76a;
-    padding-left:10px;
-}
-
-.category-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,180px));
-    gap:12px;
-    margin-bottom:25px;
-}
-
-.product-card{
-    background:rgba(10,10,10,0.75);
-    border:1px solid #c89b3c;
-    border-radius:15px;
-    padding:10px;
-    text-align:center;
-    min-height:150px;
-    transition:0.2s;
-}
-
-.product-card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 0 12px rgba(255,215,0,0.3);
-}
-
-.product-image{
-    font-size:32px;
-    margin-bottom:5px;
-}
-
-.product-name{
-    font-size:14px;
-    font-weight:bold;
-    min-height:36px;
-}
-
-.product-price{
-    color:#ffd76a;
-    font-size:14px;
-    margin:8px 0;
-}
-
-button{
-    width:100%;
-    height:42px;
-
-    background:linear-gradient(
-        180deg,
-        #c99b36,
-        #7a5818
-    );
-
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-button:hover{
-    opacity:0.9;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    border-radius:10px;
-    border:1px solid #5a4318;
-    background:#111;
-    color:white;
-    box-sizing:border-box;
-}
-
-a{
-    color:#ffd76a;
-}
-
-@media(max-width:900px){
-
-    .main-layout{
-        flex-direction:column;
+    if (!user) {
+        location.href = "login.html";
+        return null;
     }
 
-    .sidebar{
-        width:100%;
+    return user;
+}
+
+async function loadProducts() {
+
+    const { data, error } = await supabaseClient
+        .from("products")
+        .select("*")
+        .eq("is_active", true);
+
+    if (error) {
+        console.error(error);
+        return;
     }
 
-    .category-grid{
-        grid-template-columns:
-        repeat(auto-fit,minmax(160px,1fr));
-    }
+    const productsDiv = document.getElementById("products");
+
+    if (!productsDiv) return;
+
+    productsDiv.innerHTML = "";
+
+    const groups = {
+        "초월": [],
+        "강림": [],
+        "SS": [],
+        "SSS": []
+    };
+
+    data.forEach(product => {
+
+        if (product.name.startsWith("초월")) {
+            groups["초월"].push(product);
+        }
+        else if (product.name.startsWith("강림")) {
+            groups["강림"].push(product);
+        }
+        else if (product.name.startsWith("SSS")) {
+            groups["SSS"].push(product);
+        }
+        else if (product.name.startsWith("SS")) {
+            groups["SS"].push(product);
+        }
+    });
+
+    Object.keys(groups).forEach(groupName => {
+
+        if (groups[groupName].length === 0) return;
+
+        productsDiv.innerHTML += `
+            <div class="category-title">
+                🐉 ${groupName}
+            </div>
+
+            <div class="category-grid" id="group-${groupName}">
+            </div>
+        `;
+
+        const groupDiv =
+            document.getElementById(`group-${groupName}`);
+
+        groups[groupName].forEach(product => {
+
+            groupDiv.innerHTML += `
+                <div class="product-card">
+
+                    <div class="product-image">
+                        🐉
+                    </div>
+
+                    <div class="product-name">
+                        ${product.name}
+                    </div>
+
+                    <div class="product-price">
+                        ${Number(product.price).toLocaleString()}P
+                    </div>
+
+                    <button onclick="createOrder(${product.id})">
+                        신청하기
+                    </button>
+
+                </div>
+            `;
+        });
+    });
 }
+
+async function createOrder(productId) {
+
+    const user = await getCurrentUser();
+
+    const { data: product } = await supabaseClient
+        .from("products")
+        .select("*")
+        .eq("id", productId)
+        .single();
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    if (profile.points < product.price) {
+        alert("포인트가 부족합니다.");
+        return;
+    }
+
+    const newPoint = profile.points - product.price;
+
+    await supabaseClient
+        .from("orders")
+        .insert({
+            user_id: user.id,
+            nickname: profile.nickname,
+            product_name: product.name,
+            product_price: product.price,
+            status: "대기중"
+        });
+
+    await supabaseClient
+        .from("profiles")
+        .update({
+            points: newPoint
+        })
+        .eq("id", user.id);
+
+    alert("신청 완료!");
+
+    location.reload();
+}
+
+window.loadProducts = loadProducts;
+window.createOrder = createOrder;
+
+window.addEventListener("DOMContentLoaded", () => {
+    loadProducts();
+});
