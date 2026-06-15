@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -9,7 +10,9 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase-config.js"></script>
+
 <script src="app.js" defer></script>
 
 </head>
@@ -22,20 +25,27 @@
 
 <div class="container">
 
-    <div class="card">
-        <h2>내 정보</h2>
+```
+<div class="card">
+    <h2>내 정보</h2>
 
-        <p><b>닉네임:</b> <span id="nickname">불러오는중...</span></p>
+    <p><b>닉네임:</b> <span id="nickname">불러오는중...</span></p>
 
-        <p><b>포인트:</b> <span id="points">0</span>P</p>
+    <p><b>포인트:</b> <span id="points">0</span>P</p>
 
-        <button onclick="logout()">로그아웃</button>
-    </div>
+    <button onclick="logout()">로그아웃</button>
 
-    <div class="card">
-        <h2>상품 목록</h2>
-        <div id="products"></div>
-    </div>
+    <br><br>
+
+    <a href="myorders.html">📋 내 신청내역</a>
+
+</div>
+
+<div class="card">
+    <h2>상품 목록</h2>
+    <div id="products"></div>
+</div>
+```
 
 </div>
 
