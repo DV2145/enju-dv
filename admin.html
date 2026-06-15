@@ -93,6 +93,42 @@ async function completeOrder(orderId){
     loadOrders();
 }
 
+    async function cancelOrder(orderId){
+
+    const { data: order } = await supabaseClient
+        .from("orders")
+        .select("*")
+        .eq("id", orderId)
+        .single();
+
+    const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", order.user_id)
+        .single();
+
+    const newPoint =
+        profile.points + order.product_price;
+
+    await supabaseClient
+        .from("profiles")
+        .update({
+            points: newPoint
+        })
+        .eq("id", order.user_id);
+
+    await supabaseClient
+        .from("orders")
+        .update({
+            status: "취소"
+        })
+        .eq("id", orderId);
+
+    alert("주문 취소 및 환불 완료");
+
+    loadOrders();
+}
+    
 window.completeOrder = completeOrder;
 
 loadOrders();
