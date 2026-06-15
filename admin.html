@@ -69,12 +69,20 @@ async function loadOrders(){
 
 async function completeOrder(orderId){
 
-    await supabaseClient
+    const { data, error } = await supabaseClient
         .from("orders")
         .update({
             status:"완료"
         })
         .eq("id", orderId);
+
+    console.log("update 결과", data);
+    console.log("update 에러", error);
+
+    if(error){
+        alert(JSON.stringify(error));
+        return;
+    }
 
     alert("완료 처리됨");
 
