@@ -21,17 +21,20 @@
 ```
 <div class="card">
 
+    <h2>관리자 대시보드</h2>
+
+    <p>총 회원수 : <span id="userCount">0</span>명</p>
+    <p>대기중 주문 : <span id="waitingCount">0</span>건</p>
+    <p>완료 주문 : <span id="completeCount">0</span>건</p>
+    <p>취소 주문 : <span id="cancelCount">0</span>건</p>
+
+</div>
+
+<div class="card">
+
     <h2>포인트 지급</h2>
 
-    <input type="text" id="targetNickname" placeholder="닉네임">
-
-    <input type="number" id="givePoint" placeholder="지급 포인트">
-
-    <br><br>
-
-    <button onclick="givePointToUser()">
-        포인트 지급
-    </button>
+    <p>현재 RLS 문제로 보류중</p>
 
 </div>
 
@@ -76,36 +79,27 @@ async function checkAdmin(){
     return true;
 }
 
-async function givePointToUser(){
+async function loadDashboard(){
 
-    const nickname =
-        document.getElementById("targetNickname").value;
-
-    const point =
-        Number(document.getElementById("givePoint").value);
-
-    const { data: profile } = await supabaseClient
+    const { data: users } = await supabaseClient
         .from("profiles")
-        .select("*")
-        .eq("nickname", nickname)
-        .single();
+        .select("*");
 
-    if(!profile){
-        alert("존재하지 않는 닉네임입니다.");
-        return;
-    }
+    const { data: orders } = await supabaseClient
+        .from("orders")
+        .select("*");
 
-    const newPoint =
-        profile.points + point;
+    document.getElementById("userCount").innerText =
+        users ? users.length : 0;
 
-    await supabaseClient
-        .from("profiles")
-        .update({
-            points: newPoint
-        })
-        .eq("id", profile.id);
+    document.getElementById("waitingCount").innerText =
+        orders ? orders.filter(x => x.status === "대기중").length : 0;
 
-    alert("포인트 지급 완료");
+    document.getElementById("completeCount").innerText =
+        orders ? orders.filter(x => x.status === "완료").length : 0;
+
+    document.getElementById("cancelCount").innerText =
+        orders ? orders.filter(x => x.status === "취소").length : 0;
 }
 
 async function loadOrders(){
@@ -176,6 +170,7 @@ async function completeOrder(orderId){
     alert("완료 처리됨");
 
     loadOrders();
+    loadDashboard();
 }
 
 async function cancelOrder(orderId){
@@ -217,12 +212,13 @@ async function cancelOrder(orderId){
     alert("주문 취소 및 환불 완료");
 
     loadOrders();
+    loadDashboard();
 }
 
 window.completeOrder = completeOrder;
 window.cancelOrder = cancelOrder;
-window.givePointToUser = givePointToUser;
 
+loadDashboard();
 loadOrders();
 
 </script>
