@@ -57,8 +57,12 @@ async function loadOrders(){
             상태 : ${order.status}<br><br>
 
             <button onclick="completeOrder(${order.id})">
-            완료
-            </button>
+완료
+</button>
+
+<button onclick="cancelOrder(${order.id})">
+취소
+</button>
 
         </div>
         <hr>
