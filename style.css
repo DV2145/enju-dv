@@ -192,3 +192,33 @@ a{
         repeat(auto-fill,minmax(160px,1fr));
     }
 }
+
+.product-image{
+    height:90px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin-bottom:8px;
+}
+
+.product-image img{
+    max-width:120px;
+    max-height:90px;
+    object-fit:contain;
+    filter:drop-shadow(0 0 8px rgba(255,215,0,0.3));
+}
+
+.product-card{
+    background:rgba(10,10,10,0.75);
+    border:1px solid #c89b3c;
+    border-radius:15px;
+    padding:10px;
+    text-align:center;
+    min-height:180px;
+    transition:0.2s;
+}
+
+.product-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 15px rgba(255,215,0,0.35);
+}
