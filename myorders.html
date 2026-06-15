@@ -33,9 +33,7 @@
 
     <br>
 
-    <a href="index.html">
-        메인으로
-    </a>
+    <a href="index.html">메인으로</a>
 
 </div>
 ```
@@ -68,14 +66,12 @@ async function loadMyOrders(){
         return;
     }
 
-    const div =
-        document.getElementById("orders");
+    const div = document.getElementById("orders");
 
     div.innerHTML = "";
 
     if(data.length === 0){
-        div.innerHTML =
-            "신청 내역이 없습니다.";
+        div.innerHTML = "신청 내역이 없습니다.";
         return;
     }
 
