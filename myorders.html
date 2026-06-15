@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>내 신청내역</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase-config.js"></script>
+
+</head>
+<body>
+
+<header>
+    <div class="logo">🐉 엔주의 DV데삭</div>
+</header>
+
+<div class="container">
+
+```
+<div class="card">
+
+    <h2>내 신청내역</h2>
+
+    <div id="orders">
+        불러오는 중...
+    </div>
+
+    <br>
+
+    <a href="index.html">
+        메인으로
+    </a>
+
+</div>
+```
+
+</div>
+
+<script>
+
+async function loadMyOrders(){
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if(!user){
+        location.href = "login.html";
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("orders")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", {
+            ascending: false
+        });
+
+    if(error){
+        console.error(error);
+        return;
+    }
+
+    const div =
+        document.getElementById("orders");
+
+    div.innerHTML = "";
+
+    if(data.length === 0){
+        div.innerHTML =
+            "신청 내역이 없습니다.";
+        return;
+    }
+
+    data.forEach(order => {
+
+        div.innerHTML += `
+            <div style="margin-bottom:20px">
+
+                <b>${order.product_name}</b><br>
+
+                ${Number(order.product_price).toLocaleString()}P<br>
+
+                상태 : ${order.status}
+
+            </div>
+
+            <hr>
+        `;
+    });
+
+}
+
+loadMyOrders();
+
+</script>
+
+</body>
+</html>
