@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +9,9 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase-config.js"></script>
+
 </head>
 
 <body>
@@ -20,28 +23,31 @@
 <div class="container">
     <div class="card">
 
-        <h2>로그인</h2>
+```
+    <h2>로그인</h2>
 
-        <input type="email" id="email" placeholder="이메일">
+    <input type="email" id="email" placeholder="이메일">
 
-        <input type="password" id="password" placeholder="비밀번호">
+    <input type="password" id="password" placeholder="비밀번호">
 
-        <br><br>
+    <br><br>
 
-        <button onclick="login()">로그인</button>
+    <button onclick="login()">로그인</button>
 
-        <br><br>
+    <br><br>
 
-        <a href="signup.html">회원가입 하러가기</a>
+    <a href="signup.html">회원가입 하러가기</a>
 
-    </div>
+</div>
+```
+
 </div>
 
 <script>
 
 async function login(){
 
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
     const { error } = await supabaseClient.auth.signInWithPassword({
@@ -50,7 +56,18 @@ async function login(){
     });
 
     if(error){
-        alert(error.message);
+
+        if(error.message.includes("Invalid login credentials")){
+            alert("이메일 또는 비밀번호가 올바르지 않습니다.");
+            return;
+        }
+
+        if(error.message.includes("Email not confirmed")){
+            alert("이메일 인증을 완료해주세요.");
+            return;
+        }
+
+        alert("로그인 실패 : " + error.message);
         return;
     }
 
