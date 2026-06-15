@@ -23,28 +23,59 @@
     <div class="logo">🐉 엔주의 DV데삭</div>
 </header>
 
-<div class="container">
+<div class="main-layout">
 
 ```
-<div class="card">
-    <h2>내 정보</h2>
+<aside class="sidebar">
 
-    <p><b>닉네임:</b> <span id="nickname">불러오는중...</span></p>
+    <div class="profile-box">
 
-    <p><b>포인트:</b> <span id="points">0</span>P</p>
+        <h3 id="nickname">
+            불러오는중...
+        </h3>
 
-    <button onclick="logout()">로그아웃</button>
+        <p>
+            포인트 :
+            <span id="points">0</span>P
+        </p>
 
-    <br><br>
+    </div>
 
-    <a href="myorders.html">📋 내 신청내역</a>
+    <nav>
 
-</div>
+        <a href="index.html">🏠 홈</a>
 
-<div class="card">
-    <h2>상품 목록</h2>
-    <div id="products"></div>
-</div>
+        <a href="myorders.html">
+            📋 내 신청내역
+        </a>
+
+        <a href="#">
+            📢 공지사항
+        </a>
+
+        <a href="#">
+            💬 문의하기
+        </a>
+
+    </nav>
+
+    <button onclick="logout()">
+        로그아웃
+    </button>
+
+</aside>
+
+<main class="content">
+
+    <div class="card">
+
+        <h2>상품 목록</h2>
+
+        <div id="products"></div>
+
+    </div>
+
+</main>
 ```
 
 </div>
@@ -86,7 +117,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     await loadProfile();
 
-    if (typeof loadProducts === "function") {
+    if(typeof loadProducts === "function"){
         loadProducts();
     }
 
