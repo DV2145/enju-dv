@@ -58,13 +58,30 @@ async function loadProducts() {
 
         if (categories[category].length === 0) continue;
 
+        let image = "leo.png";
+
+        if (category === "강림") {
+            image = "tilki.png";
+        }
+        else if (category === "SS") {
+            image = "nello.png";
+        }
+        else if (category === "SSS") {
+            image = "hellkaiser.png";
+        }
+
         productsDiv.innerHTML += `
             <h3 class="category-title">🐉 ${category}</h3>
+
             <div class="category-grid">
+
                 ${categories[category].map(product => `
+
                     <div class="product-card">
 
-                        <div class="product-image">🐉</div>
+                        <div class="product-image">
+                            <img src="${image}">
+                        </div>
 
                         <div class="product-name">
                             ${product.name}
@@ -79,7 +96,9 @@ async function loadProducts() {
                         </button>
 
                     </div>
+
                 `).join("")}
+
             </div>
         `;
     }
