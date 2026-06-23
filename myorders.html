@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -10,8 +9,50 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="supabase-config.js"></script>
+
+<style>
+
+.order-card{
+    background:rgba(15,15,15,0.8);
+    border:1px solid #c89b3c;
+    border-radius:15px;
+    padding:15px;
+    margin-bottom:15px;
+}
+
+.order-title{
+    font-size:18px;
+    font-weight:bold;
+    color:#ffd76a;
+}
+
+.order-price{
+    margin-top:8px;
+    margin-bottom:8px;
+}
+
+.status-wait{
+    color:#ffc107;
+    font-weight:bold;
+}
+
+.status-progress{
+    color:#4da3ff;
+    font-weight:bold;
+}
+
+.status-complete{
+    color:#4caf50;
+    font-weight:bold;
+}
+
+.status-cancel{
+    color:#f44336;
+    font-weight:bold;
+}
+
+</style>
 
 </head>
 <body>
@@ -22,21 +63,19 @@
 
 <div class="container">
 
-```
-<div class="card">
+    <div class="card">
 
-    <h2>내 신청내역</h2>
+        <h2>📋 내 신청내역</h2>
 
-    <div id="orders">
-        불러오는 중...
+        <div id="orders">
+            불러오는 중...
+        </div>
+
+        <br>
+
+        <a href="index.html">🏠 메인으로</a>
+
     </div>
-
-    <br>
-
-    <a href="index.html">메인으로</a>
-
-</div>
-```
 
 </div>
 
@@ -77,18 +116,36 @@ async function loadMyOrders(){
 
     data.forEach(order => {
 
+        let statusClass = "status-wait";
+
+        if(order.status === "진행중"){
+            statusClass = "status-progress";
+        }
+
+        if(order.status === "완료"){
+            statusClass = "status-complete";
+        }
+
+        if(order.status === "취소"){
+            statusClass = "status-cancel";
+        }
+
         div.innerHTML += `
-            <div style="margin-bottom:20px">
+            <div class="order-card">
 
-                <b>${order.product_name}</b><br>
+                <div class="order-title">
+                    ${order.product_name}
+                </div>
 
-                ${Number(order.product_price).toLocaleString()}P<br>
+                <div class="order-price">
+                    💰 ${Number(order.product_price).toLocaleString()}P
+                </div>
 
-                상태 : ${order.status}
+                <div class="${statusClass}">
+                    📌 ${order.status}
+                </div>
 
             </div>
-
-            <hr>
         `;
     });
 
