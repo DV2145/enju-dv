@@ -1,3 +1,11 @@
+앞으로도 이 방식으로 할게.
+
+네가 파일 올림
+내가 수정된 전체 파일 만들어서 돌려줌
+부분 수정은 안 시킴
+
+이게 제일 편하고 오류도 적을 거야. 
+
 <!DOCTYPE html>
 
 <html lang="ko">
@@ -18,13 +26,13 @@
 
 <div class="container">
 
-```
 <div class="card">
 
     <h2>관리자 대시보드</h2>
 
     <p>총 회원수 : <span id="userCount">0</span>명</p>
     <p>대기중 주문 : <span id="waitingCount">0</span>건</p>
+    <p>진행중 주문 : <span id="progressCount">0</span>건</p>
     <p>완료 주문 : <span id="completeCount">0</span>건</p>
     <p>취소 주문 : <span id="cancelCount">0</span>건</p>
 
@@ -47,7 +55,6 @@
     </div>
 
 </div>
-```
 
 </div>
 
@@ -95,6 +102,9 @@ async function loadDashboard(){
     document.getElementById("waitingCount").innerText =
         orders ? orders.filter(x => x.status === "대기중").length : 0;
 
+    document.getElementById("progressCount").innerText =
+        orders ? orders.filter(x => x.status === "진행중").length : 0;
+
     document.getElementById("completeCount").innerText =
         orders ? orders.filter(x => x.status === "완료").length : 0;
 
@@ -127,12 +137,20 @@ async function loadOrders(){
         if(order.status === "대기중"){
 
             buttons = `
-                <button onclick="completeOrder(${order.id})">
-                    완료
+                <button onclick="progressOrder(${order.id})">
+                    진행중
                 </button>
 
                 <button onclick="cancelOrder(${order.id})">
                     취소
+                </button>
+            `;
+        }
+        else if(order.status === "진행중"){
+
+            buttons = `
+                <button onclick="completeOrder(${order.id})">
+                    완료
                 </button>
             `;
         }
@@ -156,6 +174,22 @@ async function loadOrders(){
         `;
     });
 
+}
+
+
+async function progressOrder(orderId){
+
+    await supabaseClient
+        .from("orders")
+        .update({
+            status:"진행중"
+        })
+        .eq("id", orderId);
+
+    alert("진행중 처리됨");
+
+    loadOrders();
+    loadDashboard();
 }
 
 async function completeOrder(orderId){
@@ -215,6 +249,7 @@ async function cancelOrder(orderId){
     loadDashboard();
 }
 
+window.progressOrder = progressOrder;
 window.completeOrder = completeOrder;
 window.cancelOrder = cancelOrder;
 
