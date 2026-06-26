@@ -222,3 +222,80 @@ a{
     transform:translateY(-4px);
     box-shadow:0 0 15px rgba(255,215,0,0.35);
 }
+
+
+
+/* ========================= */
+/* 관리자 주문 카드 */
+/* ========================= */
+
+#orders{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(380px,1fr));
+    gap:20px;
+}
+
+.admin-order-card{
+    background:rgba(15,15,15,0.82);
+    border:1px solid #c89b3c;
+    border-radius:18px;
+    padding:18px;
+    transition:.2s;
+}
+
+.admin-order-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 15px rgba(255,215,0,.35);
+}
+
+.admin-order-name{
+    color:#ffd76a;
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.admin-order-info{
+    font-size:15px;
+    color:#ddd;
+    margin:6px 0;
+}
+
+.admin-buttons{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+.admin-buttons button{
+    flex:1;
+    height:42px;
+}
+
+.status-wait{
+    color:#ffd54a;
+    font-weight:bold;
+}
+
+.status-progress{
+    color:#4db2ff;
+    font-weight:bold;
+}
+
+.status-complete{
+    color:#46d369;
+    font-weight:bold;
+}
+
+.status-cancel{
+    color:#ff6666;
+    font-weight:bold;
+}
+
+@media(max-width:700px){
+
+    #orders{
+        grid-template-columns:1fr;
+    }
+
+}
